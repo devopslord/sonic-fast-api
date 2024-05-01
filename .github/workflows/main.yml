@@ -3,10 +3,6 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-#on:
-#  workflow_dispatch:
-#    branches:
-#      - main
 
 env: 
   REGION: us-east-1
@@ -58,7 +54,7 @@ jobs:
           run: terraform apply --auto-approve
 
   sonarqube:
-    name: SonarQube Integration
+    name: SonarQube Scan Integration
     needs: 
       - deploy-infra
     runs-on: ubuntu-latest
@@ -127,12 +123,12 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-pf-aws-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{secrets.ECR_DOCKER_IMAGE}}
+          ECR_REPOSITORY: ${{env.ECR_DOCKER_IMAGE}}
           IMAGE_TAG: ${{ steps.short-sha.outputs.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_DOCKER_IMAGE" >> $GITHUB_OUTPUT
+          docker build -t $ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}" >> $GITHUB_OUTPUT
 
       - name: Checkout AWS ECS Deploy GH Action
         uses: actions/checkout@v2
