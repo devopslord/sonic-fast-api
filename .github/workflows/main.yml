@@ -123,7 +123,7 @@ jobs:
           ECR_REPOSITORY: ${{env.ECR_DOCKER_IMAGE}}
           IMAGE_TAG: ${{ steps.short-sha.outputs.sha }}
         run: |
-          ddocker build -t $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_DOCKER_IMAGE" >> $GITHUB_OUTPUT
 
