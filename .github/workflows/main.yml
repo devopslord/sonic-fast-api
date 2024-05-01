@@ -6,6 +6,9 @@ on:
 
 env: 
       ECR_DOCKER_IMAGE: fast-api-repo
+      ECS_SERVICE: fastapi-svc
+      ECS_CLUSTER: fast-api-cluster
+      ECS_TASK_DEFINITION: fastapi-svc
 
 jobs:
   Deploy-Infra:
