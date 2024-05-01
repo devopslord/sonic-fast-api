@@ -4,16 +4,10 @@ on:
     branches: [ "main" ]
   pull_request:
 
-env: 
-  REGION: us-east-1
-  ECR_DOCKER_IMAGE: fast-api-repo
-  ECS_SERVICE: fastapi-svc
-  ECS_CLUSTER: fast-api-cluster
-  ECS_TASK_DEFINITION: fastapi-svc
-  AWS_REGION: us-east-1
 
 jobs:
-  deploy-infra:
+  Deploy-Infra:
+    name: Creating Infra
     runs-on: ubuntu-latest
 
     defaults:
@@ -53,10 +47,10 @@ jobs:
         - name: apply terraform
           run: terraform apply --auto-approve
 
-  sonarqube:
+  SonarqubeScan:
     name: SonarQube Scan Integration
     needs: 
-      - deploy-infra
+      - Deploy-Infra
     runs-on: ubuntu-latest
     
     
@@ -81,9 +75,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  build-image:
+  Build-Image:
+    name: Build Docker Image and Push to ECR
     needs: 
-      - sonarqube
+      - Deploy-Infra
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -144,8 +139,8 @@ jobs:
           app_version: ${{ steps.short-sha.outputs.sha }}
           ecs_cluster: ${{ env.ECS_CLUSTER }}
           ecs_service: ${{ env.ECS_SERVICE }}
-          ecs_container_name: 'fastapi'
-          aws_region: ${{ env.AWS_REGION }}
+          ecs_container_name: ${{ env.ECS_CONTAINER_NAME }}
+          aws_region: ${{ secrets.REGION}}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           timeout: 900
