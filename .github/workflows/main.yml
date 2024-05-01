@@ -5,10 +5,12 @@ on:
   pull_request:
 
 env: 
-      ECR_DOCKER_IMAGE: fast-api-repo
-      ECS_SERVICE: fastapi-svc
-      ECS_CLUSTER: fast-api-cluster
-      ECS_TASK_DEFINITION: fastapi-svc
+  REGION: us-east-1
+  ECR_DOCKER_IMAGE: fast-api-repo
+  ECS_SERVICE: fastapi-svc
+  ECS_CLUSTER: fast-api-cluster
+  ECS_TASK_DEFINITION: fastapi-svc
+  AWS_REGION: us-east-1
 
 jobs:
   Deploy-Infra:
@@ -126,10 +128,9 @@ jobs:
           ECR_REPOSITORY: ${{env.ECR_DOCKER_IMAGE}}
           IMAGE_TAG: ${{ steps.short-sha.outputs.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_DOCKER_IMAGE" >> $GITHUB_OUTPUT
-
+          docker build -t $ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}" >> $GITHUB_OUTPUT
 
       - name: Checkout AWS ECS Deploy GH Action
         uses: actions/checkout@v2
@@ -145,7 +146,7 @@ jobs:
           app_version: ${{ steps.short-sha.outputs.sha }}
           ecs_cluster: ${{ env.ECS_CLUSTER }}
           ecs_service: ${{ env.ECS_SERVICE }}
-          ecs_container_name: ${{ env.ECS_CONTAINER_NAME }}
+          ecs_container_name: 'fastapi'
           aws_region: ${{ secrets.REGION}}
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
