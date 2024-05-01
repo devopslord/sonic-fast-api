@@ -5,12 +5,12 @@ on:
   pull_request:
 
 env: 
-  REGION: us-east-1
+
   ECR_DOCKER_IMAGE: fast-api-repo
-  #ECS_SERVICE: fastapi-svc
-  #ECS_CLUSTER: fast-api-cluster
+  ECS_SERVICE: fastapi-svc
+  ECS_CLUSTER: fast-api-cluster
   ECS_TASK_DEFINITION: fastapi-svc
-  #AWS_REGION: us-east-1
+  
 
 jobs:
   Deploy-Infra:
