@@ -4,6 +4,8 @@ on:
     branches: [ "main" ]
   pull_request:
 
+env: 
+      ECR_DOCKER_IMAGE: fast-api-repo
 
 jobs:
   Deploy-Infra:
@@ -121,9 +123,10 @@ jobs:
           ECR_REPOSITORY: ${{env.ECR_DOCKER_IMAGE}}
           IMAGE_TAG: ${{ steps.short-sha.outputs.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/${{env.ECR_DOCKER_IMAGE}}" >> $GITHUB_OUTPUT
+          ddocker build -t $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_DOCKER_IMAGE:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_DOCKER_IMAGE" >> $GITHUB_OUTPUT
+
 
       - name: Checkout AWS ECS Deploy GH Action
         uses: actions/checkout@v2
