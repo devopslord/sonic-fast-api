@@ -17,9 +17,52 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
+  deploy-infra:
+    runs-on: ubuntu-latest
+
+    defaults:
+        run:
+          shell: bash
+          working-directory: ./terraform
+    
+
+    steps:
+
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Configure AWS Credentials 
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            aws-region: ${{ secrets.REGION }}
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+            
+        - name: Install Terraform 
+          uses: hashicorp/setup-terraform@v3
+
+        - name: Initialize Terraform
+          run: terraform init
+
+        - name: Validate Terraform
+          run: terraform validate
+
+        - name: terraform plan
+          run: terraform plan
+
+        - name: format terraform
+          run: terraform fmt
+        
+        - name: apply terraform
+          run: terraform apply --auto-approve
+
   sonarqube:
     name: SonarQube Integration
+    needs: 
+      - deploy-infra
     runs-on: ubuntu-latest
+    
     
     steps:
     - uses: actions/checkout@v4
@@ -43,6 +86,8 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build-image:
+    needs: 
+      - sonarqube
     runs-on: ubuntu-latest
     defaults:
       run:
