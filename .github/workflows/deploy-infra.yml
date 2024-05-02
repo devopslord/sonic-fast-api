@@ -1,4 +1,4 @@
-name: Deploy Terraform
+name: Deploy infra
 
 on:
     workflow_dispatch:
@@ -7,7 +7,7 @@ on:
     
         
 jobs:
-    deploy-terraform:
+    deploy-infra:
         runs-on: ubuntu-latest
 
         defaults:

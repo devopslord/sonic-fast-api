@@ -1,4 +1,4 @@
-name: Destroy Terraform!! 🛑
+name: Destroy infra!! 🛑
 
 on:
     workflow_dispatch:
@@ -6,7 +6,7 @@ on:
         - main
         
 jobs:
-    destroy-terraform:
+    destroy-infra:
         runs-on: ubuntu-latest
 
         defaults:
